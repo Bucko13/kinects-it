@@ -145,7 +145,7 @@ module.exports = (passport) => {
       process.nextTick(() => {
         const userJson = profile._json;
         const userInfo = {
-          name: userJson.username,
+          name: userJson.username || userJson.name,
           email: userJson.email,
           coinbaseId: userJson.uuid,
           avatarURL: userJson.avatar_url,

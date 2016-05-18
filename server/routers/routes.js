@@ -5,6 +5,7 @@ const https = require('https');
 const authKeys = require('../../config.js');
 const User = require('../models/userModel');
 const logger = require('../config/logger.js');
+const coinbase = require('coinbase');
 
 module.exports = (app, passport) => {
 
@@ -14,32 +15,6 @@ module.exports = (app, passport) => {
   app.route('/api/v1/users/:id/homes/:code').post(userController.addToHome);
   app.route('/api/v1/users/:id/homes/:code').delete(userController.leaveHome);
 
-  app.get('/api/v1/authentication', (req, res, next) => {
-    if (req.isAuthenticated()) {
-      const message = {
-        user: {
-          name:req.session.passport.user.name,
-          email: req.session.passport.user.email,
-          id: req.session.passport.user.id,
-        },
-        sessionId: req.session.id,
-        host: req.user.defaultviewhost,
-        house: req.session.passport.user.house,
-        payAccounts: req.session.passport.user.payAccounts,
-      }
-
-      if (req.session.passport.user.house) {
-        message.house = {
-          id: req.session.passport.user.house.id,
-          code: req.session.passport.user.house.hostCode,
-          name: req.session.passport.user.house.name,
-        };
-      }
-      return res.json(message);
-    } else {
-      return res.json(false);
-    }
-  })
   // Update a user's profile information
   app.put('/api/v1/users',(req, res, next) => {
     return User.update(req.body)
@@ -96,6 +71,14 @@ module.exports = (app, passport) => {
 
     })(req, res, next);
   });
+
+/*****************************************
+********* Transaction ROUTES **********
+******************************************/
+  // app.post('/api/v1/users/:id/payment', (req, res) =>{
+  //   cbClient = new coinbase.Client({'apiKey': authKeys.COINBASE_CLIENT_ID, 'apiSecret': authKeys.COINBASE_CLIENT_SECRET});
+
+  // });
 
 /*****************************************
 ********* Authentication ROUTES **********

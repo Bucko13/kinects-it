@@ -25,6 +25,7 @@ export function requireAuthentication(Component) {
         })
           .done((response) => {
             if (response) {
+              console.log('what is the response from user on checkAuth:', response);
               this.props.actions.setUserAsHost(response.defaultviewhost);
               this.props.actions.setUser(response.user);
               this.props.actions.loadPayAccounts(response.payAccounts);
