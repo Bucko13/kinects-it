@@ -8,6 +8,7 @@ import Subheader from 'material-ui/Subheader';
 import Paper from 'material-ui/Paper';
 import styles from '../assets/formStyles';
 import Formsy from 'formsy-react';
+import FontIcon from 'material-ui/FontIcon';
 import { FormsyText, FormsyRadioGroup, FormsyRadio } from 'formsy-material-ui/lib';
 import CircularProgress from 'material-ui/CircularProgress';
 import $ from 'jquery';
@@ -31,6 +32,7 @@ export class DevicePage extends React.Component {
       units: 0,
       deviceTransactions: [],
       spinner: false,
+      accountInfo: '',
     };
   }
 
@@ -47,6 +49,51 @@ export class DevicePage extends React.Component {
     })
     .fail((error) => {
       console.log('error in server response', error);
+    });
+  }
+
+/**
+* A method to retrieve the account information of the currently signed in user
+*/
+  getAcctInfo() {
+    /**
+    * @type constant
+    * @description This object gets sent in the post request body to the REST API for transactions
+    */
+    const txBody = {
+      homeId: this.props.appState.house.id,
+      device: {
+        name: this.props.appState.featured.name,
+        id: this.props.appState.featured.id,
+        description: this.props.appState.featured.description,
+      },
+      amount: 10,
+    };
+    const userId = this.props.authState.user.id;
+    const txApiRoute = '/api/v1/users/'.concat(userId).concat('/payment');
+    console.log('making post call to this route:', txApiRoute);
+    console.log('with this txBody', txBody);
+    $.ajax({
+      url: txApiRoute,
+      dataType: 'json',
+      crossDomain: true,
+      method: 'POST',
+      contentType: 'application/json; charset=utf-8',
+      data: JSON.stringify(txBody),
+      success: (txResult) => {
+        console.log('got a response back from transaction server:', txResult);
+        const checkoutUrl = 'https://www.coinbase.com/checkouts/'.concat(txResult);
+        console.log('set this checkoutUrl', checkoutUrl);
+        this.setState({
+          accountInfo: checkoutUrl,
+        });
+      },
+      error: (xhr, status, err) => {
+        console.error('there was an error', status, err.toString());
+      },
+      complete: () => {
+        // this.setState({ spinner: false });
+      },
     });
   }
 
@@ -230,6 +277,19 @@ export class DevicePage extends React.Component {
         {formDisplay}
         {newchart}
         {chart}
+        <FlatButton
+          label="Check Coinbase Account"
+          backgroundColor="#2b71b1"
+          hoverColor="#18355C"
+          onMouseUp={() => this.getAcctInfo()}
+          onTouchEnd={() => this.getAcctInfo()}
+          style={{ color: 'white' }}
+          secondary
+          icon={<FontIcon className="material-icons">arrow_right</FontIcon>}
+        />
+        <Paper style={styles.paperStyle}>
+          <a href={this.state.accountInfo}>Click Me</a>
+        </Paper>
       </div>
     );
   }
