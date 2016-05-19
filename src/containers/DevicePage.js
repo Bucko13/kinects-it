@@ -86,7 +86,7 @@ export class DevicePage extends React.Component {
       success: (txResult) => {
         console.log('got a response back from transaction server:', txResult);
         const checkoutFrameSrc = 'https://www.coinbase.com/checkouts/'.concat(txResult).concat('/inline');
-        const checkoutButtonLink = 'https://www.coinbase.com/checkouts/'.concat(txResult);
+        // const checkoutButtonLink = 'https://www.coinbase.com/checkouts/'.concat(txResult);
         const checkoutFrameId = 'coinbase_inline_iframe_'.concat(txResult);
         console.log('frameSrc: ', checkoutFrameSrc);
         console.log('frameId: ', checkoutFrameId);
@@ -300,8 +300,8 @@ export class DevicePage extends React.Component {
         {chart}
         {this.state.readyPayment &&
           <iframe
-            id='coinbase_inline_iframe_342c513cb4ea6f9b5c4e8b7904421ad1'
-            src='https://www.coinbase.com/checkouts/342c513cb4ea6f9b5c4e8b7904421ad1/inline'
+            id="coinbase_inline_iframe_342c513cb4ea6f9b5c4e8b7904421ad1"
+            src="https://www.coinbase.com/checkouts/342c513cb4ea6f9b5c4e8b7904421ad1/inline"
             style={
               {
                 width: '460px',
