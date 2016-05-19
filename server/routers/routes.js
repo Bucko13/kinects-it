@@ -2,6 +2,7 @@
 const router = require('express').Router();
 const userController = require('../controllers/userController.js');
 const transactionController = require('../controllers/transactionController.js');
+const homeController = require('../controllers/homeController.js');
 const https = require('https');
 const authKeys = require('../../config.js');
 const User = require('../models/userModel');
@@ -77,10 +78,9 @@ module.exports = (app, passport) => {
 ********* Transaction ROUTES **********
 ******************************************/
   app.post('/api/v1/users/:id/payment', (req, res, next) => {
-    // const result = transactionController.sendTransaction(req.params.id, req.body);
-    return transactionController.createTxCheckout((checkoutPath) => {
+    return transactionController.createTxCheckout(req.params.id, req.body, (checkoutPath) => {
       console.log('this is the checkoutPath:', checkoutPath);
-      res.json(checkoutPath);
+      return res.json(checkoutPath);
     });
   });
 

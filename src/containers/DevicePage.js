@@ -8,7 +8,7 @@ import Subheader from 'material-ui/Subheader';
 import Paper from 'material-ui/Paper';
 import styles from '../assets/formStyles';
 import Formsy from 'formsy-react';
-import FontIcon from 'material-ui/FontIcon';
+// import FontIcon from 'material-ui/FontIcon';
 import { FormsyText, FormsyRadioGroup, FormsyRadio } from 'formsy-material-ui/lib';
 import CircularProgress from 'material-ui/CircularProgress';
 import $ from 'jquery';
@@ -32,7 +32,10 @@ export class DevicePage extends React.Component {
       units: 0,
       deviceTransactions: [],
       spinner: false,
-      accountInfo: '',
+      checkoutFrameId: '',
+      checkoutFrameSrc: '',
+      paymentReceived: false,
+      readyPayment: false,
     };
   }
 
@@ -55,11 +58,12 @@ export class DevicePage extends React.Component {
 /**
 * A method to retrieve the account information of the currently signed in user
 */
-  getAcctInfo() {
+  purchaseDevice(deviceState) {
     /**
     * @type constant
     * @description This object gets sent in the post request body to the REST API for transactions
     */
+    console.log('running purchaseDevice');
     const txBody = {
       homeId: this.props.appState.house.id,
       device: {
@@ -67,12 +71,11 @@ export class DevicePage extends React.Component {
         id: this.props.appState.featured.id,
         description: this.props.appState.featured.description,
       },
-      amount: 10,
+      amount: parseFloat(this.state.totalCost),
+      deviceState,
     };
     const userId = this.props.authState.user.id;
     const txApiRoute = '/api/v1/users/'.concat(userId).concat('/payment');
-    console.log('making post call to this route:', txApiRoute);
-    console.log('with this txBody', txBody);
     $.ajax({
       url: txApiRoute,
       dataType: 'json',
@@ -82,19 +85,36 @@ export class DevicePage extends React.Component {
       data: JSON.stringify(txBody),
       success: (txResult) => {
         console.log('got a response back from transaction server:', txResult);
-        const checkoutUrl = 'https://www.coinbase.com/checkouts/'.concat(txResult);
-        console.log('set this checkoutUrl', checkoutUrl);
+        const checkoutFrameSrc = 'https://www.coinbase.com/checkouts/'.concat(txResult).concat('/inline');
+        const checkoutButtonLink = 'https://www.coinbase.com/checkouts/'.concat(txResult);
+        const checkoutFrameId = 'coinbase_inline_iframe_'.concat(txResult);
+        console.log('frameSrc: ', checkoutFrameSrc);
+        console.log('frameId: ', checkoutFrameId);
         this.setState({
-          accountInfo: checkoutUrl,
+          checkoutFrameId,
+          checkoutFrameSrc,
         });
+        window.addEventListener('message', this.receivePaymentMessage, false);
       },
       error: (xhr, status, err) => {
         console.error('there was an error', status, err.toString());
       },
       complete: () => {
+        this.setState({
+          readyPayment: true,
+        });
         // this.setState({ spinner: false });
       },
     });
+  }
+
+  receivePaymentMessage(event) {
+    if (event.origin === 'https://www.coinbase.com') {
+      const eventType = event.data.split('|')[0];     // "coinbase_payment_complete"
+      const eventId = event.data.split('|')[1];     // ID for this payment type
+      console.log('eventType:', eventType);
+      console.log('eventId:', eventId);
+    }
   }
 
   totalCost(time, units) {
@@ -181,7 +201,8 @@ export class DevicePage extends React.Component {
     deviceState.isactive = true;
     deviceState.deviceid = this.props.appState.featured.id;
 
-    this.toggleDevice(deviceState);
+    this.purchaseDevice(deviceState);
+    // this.toggleDevice(deviceState);
   }
 
   notifyFormError(data) {
@@ -277,19 +298,22 @@ export class DevicePage extends React.Component {
         {formDisplay}
         {newchart}
         {chart}
-        <FlatButton
-          label="Check Coinbase Account"
-          backgroundColor="#2b71b1"
-          hoverColor="#18355C"
-          onMouseUp={() => this.getAcctInfo()}
-          onTouchEnd={() => this.getAcctInfo()}
-          style={{ color: 'white' }}
-          secondary
-          icon={<FontIcon className="material-icons">arrow_right</FontIcon>}
-        />
-        <Paper style={styles.paperStyle}>
-          <a href={this.state.accountInfo}>Click Me</a>
-        </Paper>
+        {this.state.readyPayment &&
+          <iframe
+            id='coinbase_inline_iframe_342c513cb4ea6f9b5c4e8b7904421ad1'
+            src='https://www.coinbase.com/checkouts/342c513cb4ea6f9b5c4e8b7904421ad1/inline'
+            style={
+              {
+                width: '460px',
+                height: '350px',
+                border: 'none',
+                boxShadow: '0 1px 3px rgba(0,0,0,0.25)',
+              }
+            }
+            allowTransparency="true"
+            frameBorder="0"
+          ></iframe>
+        }
       </div>
     );
   }
@@ -320,3 +344,17 @@ export default connect(
   mapDispatchToProps
 )(DevicePage);
 
+// ****** was using to test the purchase *****/
+// <FlatButton
+//   label="Check Coinbase Account"
+//   backgroundColor="#2b71b1"
+//   hoverColor="#18355C"
+//   onMouseUp={() => this.getAcctInfo()}
+//   onTouchEnd={() => this.getAcctInfo()}
+//   style={{ color: 'white' }}
+//   secondary
+//   icon={<FontIcon className="material-icons">arrow_right</FontIcon>}
+// />
+// <Paper style={styles.paperStyle}>
+//   <a href={this.state.accountInfo} data-button-text="Rent Device">Click Me</a>
+// </Paper>

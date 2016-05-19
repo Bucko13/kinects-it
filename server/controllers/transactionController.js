@@ -28,33 +28,59 @@ module.exports.sendTransaction = (customerId, reqBody) => {
     return db.one('SELECT * FROM user_pay_accounts WHERE userid=$1 AND paymethodid=2', customerId);
   })
   .catch(err => {
-    console.log('error!!!!', err);
+    console.log('error!', err);
   });
 };
 
-module.exports.createTxCheckout = (callback) => {
+module.exports.createTxCheckout = (userId, reqBody, callback) => {
   const cbClient = new coinbase.Client({
-    // accessToken: payInfo.accesstoken,
-    // refreshToken: payInfo.refreshtoken,
     apiKey: authKeys.COINBASE_API_KEY,
     apiSecret: authKeys.COINBASE_API_SECRET,
   });
-  // cbClient.strictSSL = false;
-  // then get the client's account with the accountid
-  cbClient.createCheckout({ amount: '10.00',
-                         currency: 'USD',
-                         name: 'Spring donation',
-                         description: 'Sample checkout',
-                         type: 'donation',
-                         style: 'donation_large',
-                         customer_defined_amount: true,
-                         amount_presets: ['20.00', '50.00'],
-                         collect_email: true,
-                         metadata: {
-                           product_id: 'id_1020',
-                         } }, (err, checkout) => {
-    if (err) return err;
-    console.log('the checkout information:', checkout);
-    return callback(checkout.embed_code);
+  const txArgs = {
+    amount: reqBody.amount,
+    currency: 'USD',
+    description: reqBody.device.description,
+    name: reqBody.device.name,
+    deviceId: reqBody.device.id,
+    // deviceState: reqBody.deviceState,
+  };
+  return db.one('SELECT userid FROM users_houses WHERE houseid=$1 AND isHostHouse=true',
+    [reqBody.homeId])
+  .then(hostid => {
+    // use the host id to get the host email
+    txArgs.hostId = hostid.userid;
+    return db.one('SELECT email FROM users WHERE id=$1', hostid.userid);
+  })
+  .then(hostEmail => {
+    // then get the client's account with the accountid
+    Object.assign(txArgs, reqBody.deviceState);
+    return cbClient.createCheckout({ amount: txArgs.amount,
+                           currency: 'USD',
+                           name: txArgs.name,
+                           description: txArgs.description,
+                           type: 'order',
+                           style: 'custom_large',
+                           // style: 'buy_now_large',
+                           notifications_url: 'http://requestb.in/14gr32i1',
+                           success_url: process.env.NODE_ENV === 'development' ? 'http://localhost:3001/dashboard' : 'https://kinects.it/dashboard',
+                           cancel_url: process.env.NODE_ENV === 'development' ? 'http://localhost:3001/dashboard' : 'https://kinects.it/dashboard',
+                           auto_redirect: true,
+                           metadata: {
+                             device_id: txArgs.deviceId,
+                             host_id: txArgs.hostId,
+                             host_email: hostEmail.email,
+                             isactive: txArgs.isactive,
+                             paidusage: txArgs.paidusage,
+                             payaccountid: txArgs.payaccountid,
+                             amountspent: txArgs.amountspent,
+                             timespent: txArgs.timespent,
+                           } }, (err, checkout) => {
+      if (err) return err;
+      return callback(checkout.embed_code);
+    });
+  })
+  .catch(err => {
+    console.log('Error:', err);
   });
 };
