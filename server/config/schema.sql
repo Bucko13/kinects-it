@@ -71,6 +71,7 @@ CREATE TABLE user_pay_accounts (
   nickname VARCHAR,
   accountId VARCHAR,
   accessToken VARCHAR,
+  refreshToken VARCHAR,
   payMethodId INTEGER,
   userId INTEGER
 );

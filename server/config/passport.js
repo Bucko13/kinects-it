@@ -151,6 +151,7 @@ module.exports = (passport) => {
           avatarURL: userJson.avatar_url,
           payAccount: 'coinbase',
           accessToken,
+          refreshToken,
         };
         // see if the user exists in the database already
         db.any('SELECT * from users WHERE email=$1 OR name=$2', [userInfo.email, userInfo.name])

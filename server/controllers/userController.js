@@ -2,7 +2,6 @@
 /* eslint-disable strict */
 'use strict';
 const logger = require('../config/logger.js');
-// const passport = require('passport');
 const db = require('../db.js');
 
 module.exports.signUp = (req, res, next) => {
