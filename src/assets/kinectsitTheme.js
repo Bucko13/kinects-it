@@ -15,7 +15,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 const _spacing2 = _interopRequireDefault(_spacing);
 
-const textColor = _colors.fullWhite;
+// const textColor = _colors.fullWhite;
 
 exports.default = {
   spacing: _spacing2.default,
