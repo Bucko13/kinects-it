@@ -13,18 +13,19 @@ With Kinects.it, you don't need to wait for your home to get smart. Just plug in
 1. [Introduction](#Introduction)
 2. [Requirements](#requirements)
 3. [Development](#development)
-- [Dependencies](#dependencies)
-- [Tasks](#tasks)
-5. [Resources](#resources)
-- [User Flow](#user-flow)
-- [Client File Structure](#client-file-structure)
-- [Server Architecture](#server-architecture)
-- [Database Schema](#database-schema)
-- [Local API Routes](#local-api-routes)
-- [Third-Party API Interactions](#third-party-api-interactions)
-- [Styling](#styling)
+ 1. [Dependencies](#dependencies)
+ 2. [Tasks](#tasks)
 4. [Team](#team)
-6. [Contributing](#contributing)
+5. [Contributing](#contributing)
+6. [Resources](#resources)
+ 1. [User Flow](#user-flow)
+ 2. [Client File Structure](#client-file-structure)
+ 3. [Server Architecture](#server-architecture)
+ 4. [Database Schema](#database-schema)
+ 5. [Local API Routes](#local-api-routes)
+ 6. [Third-Party API Interactions](#third-party-api-interactions)
+ 7. [Styling](#styling)
+
 
 
 ##__Introduction__
@@ -59,16 +60,16 @@ With Kinects.it, you don't need to wait for your home to get smart. Just plug in
 
 ####__Client__
 - React 
+- React Router
 - Redux 
 - Material UI
 - Foundation
 - SASS
-- Webpack
 
 ####__Hardware__
-- Provided
+- LittleBits
 
-> Alternatively, you can create your own testing account using the Little Bits Smart Home Kit: Power, Button, CloudBit, AC & IR. Use the MAC address of your CloudBit in the device set up page, and add your access token to your config.js file.
+> Create your own testing account using the Little Bits Smart Home Kit: Power, Button, CloudBit, AC & IR. Use the MAC address of your CloudBit in the device set up page, and add your access token to your config.js file.
 
 ####__APIs__
 - Little Bits <http://developers.littlebitscloud.cc/>
@@ -82,7 +83,9 @@ With Kinects.it, you don't need to wait for your home to get smart. Just plug in
 
 ####__Deployment__
 - AWS EC2 
-
+- AWS Load Balancer
+- Webpack
+- SSL
 
 ##__Development__
 
@@ -155,7 +158,7 @@ To contribute, create a fork on a pull request on a feature branch. We will do o
 3. Add the ability for users to be both a host and a guest.
 4. Allow hosts or guests to be in multiple houses at once.
 5. Integrate additional payment options.
-
+6. Add sockets to render instant updates of device status to guests / hosts.
 
 ##__Resources__
 
@@ -164,22 +167,6 @@ To contribute, create a fork on a pull request on a feature branch. We will do o
 The home dashboard is the primary screen for both guests and hosts. From there, each user can select a device - and depending on their role, interact with that device in different ways - including toggling the power on/off, paying for usage, and/or viewing transaction history.
 
 ![kinectsituserflow](https://cloud.githubusercontent.com/assets/5761911/15413706/f2437986-1de7-11e6-9b99-c097845bef7d.png)
-
-
-###__Client File Structure__
-This project uses React with React-Router and Redux. The image below shows the primary files in the project, and how Redux interacts with them to manage an immutable state tree. 
-
-####__Why We Chose React__
-Having a responsive client-side for this application is important; users are quickly (and often!) navigating through many different pages. Because of that, we decided to build a single-page application using React. We chose React beause of its speed and modularity - we liked that we were able to separate concerns and we also liked the number of useful libraries (like React Router and Redux) that supported the framework. Additionally, React Native is quickly gaining credibility in developer circles - and transitioning this application to a mobile application (which it is a natural fit for) would be fairly simple.
-
-####__Why We Chose Redux__
-Redux was the missing piece we need to build out our file structure. It allowed us to handle state in a more controlled way (a centralized, immutable state tree), and also allowed us to pass only the information down that was necessary (so we didn’t have to bog down each page with unncessary information). If you are not familiar with Redux, the following resources may be useful: 
-1. Logger middleware for Redux (open Chrome Console when interacting with code to see state tree) <https://github.com/theaqua/redux-logger>
-2. Egghead tutorial from creator of Redux: <https://egghead.io/series/getting-started-with-redux>
-3. Full-stack Redux tutorial: <http://teropa.info/blog/2015/09/10/full-stack-redux-tutorial.html>
-4. Redux Boilerplate (we used components of this): <https://github.com/coryhouse/react-slingshot>
-
-![kinectsitclientfilestructure](https://cloud.githubusercontent.com/assets/5761911/15413705/f2102c52-1de7-11e6-8a60-4c116452648e.png)
 
 
 ###__Server Architecture__ 
@@ -245,17 +232,6 @@ zrem device [deviceHardwareKey]
 ```
 
 
-###__Local API Routes__
-
-####__Primary Interactions__
-The pictures below show the the urls, methods, purpose, and data received back from our client-to-server API requests. 
-
-![apiusers](https://cloud.githubusercontent.com/assets/5761911/15436412/a0d2993a-1e76-11e6-92af-d7fa5df01c23.png)
-![apihouses](https://cloud.githubusercontent.com/assets/5761911/15436413/a0d36db0-1e76-11e6-8002-72150180aa4c.png)
-![apidevices](https://cloud.githubusercontent.com/assets/5761911/15436603/aafa0fc8-1e77-11e6-9f7d-35890f6ad7b5.png)
-
-
-
 ###__Third-Party API Interactions__
 
 ####__LittleBits API__
@@ -266,6 +242,31 @@ The diagram also shows the sequence for Coinbase O-Auth in our application.
 
 ![kinectsitthirdpartyapi](https://cloud.githubusercontent.com/assets/5761911/15436156/49f8b848-1e75-11e6-8a0c-fa0a46d7b6e2.png)
 
+
+###__Local API Routes__
+
+####__Primary Interactions__
+The pictures below show the the urls, methods, purpose, and data received back from our client-to-server API requests. 
+
+![apiusers](https://cloud.githubusercontent.com/assets/5761911/15436412/a0d2993a-1e76-11e6-92af-d7fa5df01c23.png)
+![apihouses](https://cloud.githubusercontent.com/assets/5761911/15436413/a0d36db0-1e76-11e6-8002-72150180aa4c.png)
+![apidevices](https://cloud.githubusercontent.com/assets/5761911/15436603/aafa0fc8-1e77-11e6-9f7d-35890f6ad7b5.png)
+
+
+###__Client File Structure__
+This project uses React with React-Router and Redux. The image below shows the primary files in the project, and how Redux interacts with them to manage an immutable state tree. 
+
+####__Why We Chose React__
+Having a responsive client-side for this application is important; users are quickly (and often!) navigating through many different pages. Because of that, we decided to build a single-page application using React. We chose React beause of its speed and modularity - we liked that we were able to separate concerns and we also liked the number of useful libraries (like React Router and Redux) that supported the framework. Additionally, React Native is quickly gaining credibility in developer circles - and transitioning this application to a mobile application (which it is a natural fit for) would be fairly simple.
+
+####__Why We Chose Redux__
+Redux was the missing piece we need to build out our file structure. It allowed us to handle state in a more controlled way (a centralized, immutable state tree), and also allowed us to pass only the information down that was necessary (so we didn’t have to bog down each page with unncessary information). If you are not familiar with Redux, the following resources may be useful: 
+1. Logger middleware for Redux (open Chrome Console when interacting with code to see state tree) <https://github.com/theaqua/redux-logger>
+2. Egghead tutorial from creator of Redux: <https://egghead.io/series/getting-started-with-redux>
+3. Full-stack Redux tutorial: <http://teropa.info/blog/2015/09/10/full-stack-redux-tutorial.html>
+4. Redux Boilerplate (we used components of this): <https://github.com/coryhouse/react-slingshot>
+
+![kinectsitclientfilestructure](https://cloud.githubusercontent.com/assets/5761911/15413705/f2102c52-1de7-11e6-8a60-4c116452648e.png)
 
 
 ###__Styling__
@@ -281,4 +282,5 @@ The diagram also shows the sequence for Coinbase O-Auth in our application.
 The link below contains the original design files, which also include integrated payment dashboards (in backlog). View all of the mockups in the image below here: <https://goo.gl/IhnrhM>
 
 ![kinectsmockupfolderview](https://cloud.githubusercontent.com/assets/5761911/15413743/5372f880-1de8-11e6-9d82-bd1006400bcf.png)
+
 
