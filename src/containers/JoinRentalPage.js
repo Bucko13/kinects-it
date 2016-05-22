@@ -136,7 +136,6 @@ export class JoinRentalPage extends React.Component {
             <p>{this.state.details}</p>
           </FormMessageDialogue>
         </Paper>
-        <h1>Current Rental is: {this.props.appState.houseName}</h1>
       </div>
     );
   }

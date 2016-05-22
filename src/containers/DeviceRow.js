@@ -36,21 +36,36 @@ export class DeviceRow extends React.Component {
 
     if (this.props.appState.isHost) {
       return (
-        <Card>
+        <Card className={'device-card '.concat(active === 'No' ? 'inactive' : 'active')}>
+          <FontIcon
+            className="material-icons"
+          >
+          widgets
+          </FontIcon>
           <CardHeader
+            className="device-header"
             title={this.props.device.name}
-            subtitle="Subtitle"
-            avatar="http://lorempixel.com/100/100/nature/"
+            actAsExpander
+            showExpandableButton
           />
-          <div>
-            <li>Is Active: {active}</li>
-            <NavLink to="/device-profile">
-              <RaisedButton
-                label="Device Options"
-                onClick={() => this.setFeatured()}
-              />
-            </NavLink>
-          </div>
+          <CardText expandable>
+            <div key={this.props.device.id} className="device-description">
+              <List className="description-list">
+                <ListItem primaryText={'Status: '.concat(active)} />
+                <ListItem
+                  primaryText={
+                    'Device Description: '.concat(this.props.device.description)}
+                />
+              </List>
+            </div>
+          </CardText>
+          <NavLink to="/device-profile">
+            <RaisedButton
+              className="device-button"
+              label="Device Options"
+              onClick={() => this.setFeatured()}
+            />
+          </NavLink>
         </Card>
       );
     }

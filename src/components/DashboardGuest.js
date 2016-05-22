@@ -7,9 +7,6 @@ import FontIcon from 'material-ui/FontIcon';
 export const DashboardGuest = (props) => (
   <div>
     <div className="row">
-      <h4 style={{ textAlign: 'center' }}> Welcome Home! </h4>
-    </div>
-    <div className="row">
       <Paper
         zDepth={1}
         className="dashboard-title medium-10 medium-centered columns"
@@ -21,7 +18,7 @@ export const DashboardGuest = (props) => (
           >
           home
           </FontIcon>
-          {props.appState.house.name}
+          Welcome to {props.appState.house.name}!
         </h2>
       </Paper>
     </div>

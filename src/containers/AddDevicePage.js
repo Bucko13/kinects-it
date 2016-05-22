@@ -11,6 +11,8 @@ import { browserHistory } from 'react-router';
 import CircularProgress from 'material-ui/CircularProgress';
 import { FormMessageDialogue } from '../components/FormMessageDialogue';
 import $ from 'jquery';
+import { Card, CardHeader, CardText } from 'material-ui/Card';
+import kinectsitTheme from '../assets/kinectsitTheme';
 
 export class AddDevicePage extends React.Component {
 
@@ -92,14 +94,17 @@ export class AddDevicePage extends React.Component {
 
     return (
       <div>
-        <div style={styles.center}>
-          <h2>Add Device</h2>
-          {spinner}
-          <div>
-            <p>Your device should be OFF before starting this process.</p>
+        <h2>Add Device</h2>
+        {spinner}
+        <Card className="card header-card">
+          <CardHeader
+            className="card-header"
+            title="Your device should be OFF before starting this process."
+          />
+          <CardText>
             <p>Enter a device ID to begin setting up a new device.</p>
-          </div>
-        </div>
+          </CardText>
+        </Card>
 
         <Paper style={styles.paperStyle}>
           <Formsy.Form
@@ -118,7 +123,9 @@ export class AddDevicePage extends React.Component {
             />
             <div style={styles.center}>
               <FlatButton
-                style={styles.submitStyle}
+                style={{ width: '100%' }}
+                backgroundColor={kinectsitTheme.palette.successColor}
+                hoverColor={kinectsitTheme.palette.successDark}
                 type="submit"
                 label="Find a Device"
                 disabled={!this.state.canSubmit}

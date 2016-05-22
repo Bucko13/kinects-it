@@ -15,8 +15,6 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 const _spacing2 = _interopRequireDefault(_spacing);
 
-// const textColor = _colors.fullWhite;
-
 exports.default = {
   spacing: _spacing2.default,
   fontFamily: 'Roboto, sans-serif',
@@ -26,18 +24,21 @@ exports.default = {
       textAlign: 'center',
       marginLeft: '-5%',
     },
+    // backgroundColor: _colors.deepOrangeA700,
   },
   palette: {
-    primary1Color: _colors.lightBlue700,
+    primary1Color: _colors.blueGrey500,
     // primary1Color: _colors.blueGrey400,
-    primary2Color: _colors.lightBlue700,
+    primary2Color: _colors.blueGrey500,
     primary3Color: _colors.grey600,
-    accent1Color: _colors.deepOrangeA700,
-    accent2Color: _colors.deepOrangeA700,
+    accent1Color: _colors.deepOrange900,
+    accent2Color: _colors.deepOrangeA600,
     accent3Color: _colors.deepOrangeA700,
-    alert1Color: _colors.red900,
+    alert1Color: _colors.orange500,
+    warning1Color: _colors.orange500,
     textColor: _colors.grey100,
-    successColor: _colors.green600,
+    successColor: _colors.teal300,
+    successDark: _colors.teal500,
     darkTextColor: _colors.grey900,
     alternateTextColor: '#303030',
     canvasColor: '#303030',

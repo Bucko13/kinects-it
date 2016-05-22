@@ -16,8 +16,6 @@ exports.toggleDevice = (req, res) => {
   const deviceId = notification.metadata.deviceId;
   const deviceState = notification.metadata.deviceState;
 
-  console.log('deviceState: ', deviceState);
-
   const updateDevice = {
     deviceId,
     isactive: deviceState.isactive,
@@ -79,14 +77,3 @@ exports.toggleDevice = (req, res) => {
   });
 };
 
-// notificationRouter.post('/payment', (req, res, next) => {
-//     const notification = req.body;
-//     const deviceId = notification.metadata.deviceId;
-//     const deviceState = notification.metadata.deviceState;
-//     if (notification.status === 'paid' ){
-//       console.log('congratulations, the payment went through');
-//       // will call the toggle device controller passing in deviceState, spoofing as if in the req.body
-//       homeController.toggleDevice()
-//     }
-//     console.log('received this from coinbase:', req.body);
-//   });

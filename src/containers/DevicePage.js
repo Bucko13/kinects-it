@@ -17,6 +17,9 @@ import { FormMessageDialogue } from '../components/FormMessageDialogue';
 import { browserHistory } from 'react-router';
 import moment from 'moment';
 import $ from 'jquery';
+import { Card, CardHeader, CardText } from 'material-ui/Card';
+import { List, ListItem } from 'material-ui/List';
+import FontIcon from 'material-ui/FontIcon';
 
 export class DevicePage extends React.Component {
 
@@ -85,7 +88,6 @@ export class DevicePage extends React.Component {
     * @type constant
     * @description This object gets sent in the post request body to the REST API for transactions
     */
-    console.log('running purchaseDevice');
     const txBody = {
       homeId: this.props.appState.house.id,
       device: {
@@ -106,7 +108,6 @@ export class DevicePage extends React.Component {
       contentType: 'application/json; charset=utf-8',
       data: JSON.stringify(txBody),
       success: (txResult) => {
-        console.log('got a response back from transaction server:', txResult);
         const checkoutFrameSrc = 'https://www.coinbase.com/checkouts/'.concat(txResult).concat('/inline');
         const checkoutFrameId = 'coinbase_inline_iframe_'.concat(txResult);
         this.setState({
@@ -156,16 +157,18 @@ export class DevicePage extends React.Component {
   }
 
   receivePaymentMessage(event) {
-    console.log('Im in event: ', event);
     if (event.origin === 'https://www.coinbase.com') {
       const eventType = event.data.split('|')[0];     // "coinbase_payment_complete"
-      // const eventId = event.data.split('|')[1];     // ID for this payment type
       if (eventType === 'coinbase_payment_complete') {
         console.log('Successful payment, toggle device');
+        this.setState({ readyPayment: false });
         this.toggleDevice(this.state.deviceState);
       } else if (eventType === 'coinbase_payment_mispaid') {
+        /* output error */
+        this.setState({ readyPayment: false });
         console.log('Mispayment made');
       } else if (eventType === 'coinbase_payment_expired') {
+        this.setState({ readyPayment: false });
         console.log('Mispayment made');
       } else {
         // Do something else, or ignore
@@ -259,7 +262,6 @@ export class DevicePage extends React.Component {
     deviceState.paidusage = true;
     deviceState.isactive = true;
     deviceState.deviceid = this.props.appState.featured.id;
-    this.state.formData = data;
     this.purchaseDevice(deviceState);
   }
 
@@ -283,13 +285,14 @@ export class DevicePage extends React.Component {
 
     let formDisplay = <h2>This device is currently active!</h2>;
 
-    if (!this.props.appState.featured.isactive) {
+    if (!this.props.appState.featured.isactive && !this.state.readyPayment) {
       formDisplay = (
-        <Paper style={styles.paperStyle}>
+        <Paper style={styles.paperStyle} className="transaction-form paper">
           <Formsy.Form
             onValid={() => this.enableButton()}
             onValidSubmit={(data) => this.submitForm(data)}
             onInvalidSubmit={() => this.notifyFormError()}
+            autoComplete="off"
           >
             <FormsyRadioGroup
               name="time" defaultSelected="60000" onChange={(e) => this.handleTime(e)}
@@ -330,6 +333,10 @@ export class DevicePage extends React.Component {
           </Subheader>
         </Paper>
       );
+    } else if (this.state.readyPayment) {
+      formDisplay = (
+        <h2>Please make your payment below.</h2>
+      );
     } else if (this.state.deviceActive === true) {
       formDisplay = (
         <h2>You enabled the device! Your time expires {this.state.expiration}.</h2>
@@ -353,37 +360,61 @@ export class DevicePage extends React.Component {
 
     return (
       <div>
-        <h2>How much time would you like to use the {this.props.appState.featured.name}?</h2>
+        <h2>Enable Device</h2>
         {spinner}
-        <h3>This device is: {this.props.appState.featured.description}</h3>
-        <h2> You have spent ${this.state.totalSpent} on this device</h2>
-        {formDisplay}
-        <FormMessageDialogue
-          ref={(node) => { this.messageDialogue = node; }}
-          title={this.state.error}
-          failure
-        >
-          <p>{this.state.details}</p>
-        </FormMessageDialogue>
-        {transactions}
-        {this.state.readyPayment &&
-          <iframe
-            id={this.state.checkoutFrameId}
-            src={this.state.checkoutFrameSrc}
-            style={
-              {
-                width: '460px',
-                height: '350px',
-                border: 'none',
-                boxShadow: '0 1px 3px rgba(0,0,0,0.25)',
+
+        <Card className="card header-card device-header">
+          <CardHeader title={this.props.appState.featured.name} className="card-header" />
+          <CardText>
+            <List className="list">
+              <Subheader>Device Description</Subheader>
+              <ListItem
+                className="list-item"
+                primaryText={this.props.appState.featured.description}
+                leftAvatar={<FontIcon className="material-icons">description</FontIcon>}
+              />
+              <Subheader>Total Spent</Subheader>
+              <ListItem
+                className="list-item"
+                primaryText={'$'.concat(this.state.totalSpent)}
+                leftAvatar={<FontIcon className="material-icons">highlight</FontIcon>}
+              />
+            </List>
+          </CardText>
+        </Card>
+        <div>
+          {formDisplay}
+          {this.state.readyPayment &&
+            <iframe
+              id={this.state.checkoutFrameId}
+              src={this.state.checkoutFrameSrc}
+              style={
+                {
+                  width: '460px',
+                  height: '350px',
+                  border: 'none',
+                  boxShadow: '0 1px 3px rgba(0,0,0,0.25)',
+                }
               }
-            }
-            allowTransparency="true"
-            frameBorder="0"
-          ></iframe>
-        }
-        {newchart}
-        {chart}
+              allowTransparency="true"
+              frameBorder="0"
+            ></iframe>
+          }
+          <FormMessageDialogue
+            ref={(node) => { this.messageDialogue = node; }}
+            title={this.state.error}
+            failure
+          >
+            <p>{this.state.details}</p>
+          </FormMessageDialogue>
+          <div className="row">
+            <div className="medium-10 medium-centered columns">
+              {transactions}
+              {newchart}
+              {chart}
+            </div>
+          </div>
+        </div>
       </div>
     );
   }
@@ -413,19 +444,3 @@ export default connect(
   mapStateToProps,
   mapDispatchToProps
 )(DevicePage);
-
-/* ***** was using to test the purchase ****
-<FlatButton
-  label="Check Coinbase Account"
-  backgroundColor="#2b71b1"
-  hoverColor="#18355C"
-  onMouseUp={() => this.getAcctInfo()}
-  onTouchEnd={() => this.getAcctInfo()}
-  style={{ color: 'white' }}
-  secondary
-  icon={<FontIcon className="material-icons">arrow_right</FontIcon>}
-/>
-<Paper style={styles.paperStyle}>
-  <a href={this.state.accountInfo} data-button-text="Rent Device">Click Me</a>
-</Paper>
-*/

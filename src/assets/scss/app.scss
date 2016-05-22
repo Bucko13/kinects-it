@@ -15,34 +15,44 @@
 $kinectsit-palette: (
   text-color: #F5F5F5,
   dark-text-color: #212121,
-  primary: #0288D1,
-  secondary: #E64A19,
-  success: #43A047,
-  warning: #B71C1C,
-  alert: #B71C1C,
+  primary: #607D8B,
+  secondary: #BF360C,
+  secondary-highlight: #F4511E,
+  success: #4DB6AC,
+  success-dark: #009688,
+  warning: #FF9800,
+  alert: #FF9800,
   white: #F5F5F5,
+  light-grey: #F5F5F5,
 );
 
 #app {
   padding-top:65px;
-  min-height:550px;
+  min-height:650px;
+  background-color: map-get($kinectsit-palette, light-grey);
+  
   @include breakpoint(medium) {
     // All CSS in here goes inside the media query
-    min-height: 800px;
+    min-height: 750px;
   }
   &.blur-bg{
-    background: url('http://localhost:3001/assets/images/videoframeblur.png') no-repeat center center fixed; 
+    background: url('https://www.kinects.it/assets/images/videoframeblur.png') no-repeat center center fixed; 
     -webkit-background-size: cover;
     -moz-background-size: cover;
     -o-background-size: cover;
     background-size: cover;
   }
+  &.home{
+    background:none;
+    // background: url('../videos/videoframe.png') no-repeat center center fixed;
+  }
 }
 
 .app-container {
   .page {
-    background-image: url('../videos/videoframe.png');
     padding-bottom: 30px;
+    // background-image: url('../videos/videoframe.png');
+
   }
 }
 
@@ -131,15 +141,43 @@ $kinectsit-palette: (
   }
 }
 
+/************** Default Element Stylings *********/
+.card {
+  margin: 25px 0px;
+  box-shadow: rgba(0, 0, 0, 0.247059) 0px 14px 45px, rgba(0, 0, 0, 0.219608) 0px 10px 18px!important;
+}
+
+.card.header-card {
+  .card-header {
+    // background-color: map-get($kinectsit-palette, primary);
+    // border-top: 3px solid map-get($kinectsit-palette, secondary-highlight);
+    font-size: 1.2em;
+    font-weight: bold!important;
+    background-color: map-get($kinectsit-palette, secondary);
+    border-top: 3px solid map-get($kinectsit-palette, secondary-highlight);
+  }
+  .card-title {
+    padding-bottom: 0px!important;
+  }
+  .card-text {
+    padding-top: 0px!important;
+  }
+}
+
 /*************** Inner Pages ************/
 /******* Dashboards ******/
-.dashboard-container .guest-dasboard{
+.dashboard-container .dashboard{
   padding-top:15px;
+}
+
+.dashboard h1{
+  text-align: center;
 }
 
 .dashboard-title {
   text-align: center;
   position: relative;
+  text-align: center;
   border-radius: 3px;
   .material-icons {
     font-size: 100%;
@@ -161,6 +199,7 @@ $kinectsit-palette: (
       margin: 40px 0px;
       padding: 10px;
       position: relative;
+      border-top: 3px solid map-get($kinectsit-palette, secondary);
       &.active{
         .device-button button {
           background-color: map-get($kinectsit-palette, success)!important;
@@ -195,3 +234,23 @@ $kinectsit-palette: (
   }
 }
 
+/*********** Device Page *****/
+.transaction-form {
+  margin: 45px 0px!important;
+}
+
+.device-header.card {
+  .list-item:hover{
+    cursor: default!important;
+  }
+  .material-icons{
+    font-size:2em!important;
+    top: 12px!important;
+  }
+}
+
+/***** Device Profile ***/
+.chart-container {
+  text-align: center;
+  margin-top:30px;
+}

@@ -61,11 +61,6 @@ module.exports.createTxCheckout = (userId, reqBody, callback) => {
                            description: txArgs.description,
                            type: 'order',
                            style: 'custom_large',
-                           // style: 'buy_now_large',
-                           notifications_url: 'http://requestb.in/14gr32i1',
-                           success_url: process.env.NODE_ENV === 'development' ? 'http://localhost:3001/dashboard' : 'https://kinects.it/dashboard',
-                           cancel_url: process.env.NODE_ENV === 'development' ? 'http://localhost:3001/dashboard' : 'https://kinects.it/dashboard',
-                           auto_redirect: false,
                            metadata: {
                              device_id: txArgs.deviceId,
                              host_id: txArgs.hostId,

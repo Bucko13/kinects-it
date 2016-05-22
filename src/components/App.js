@@ -17,7 +17,7 @@ export const App = (props) => (
     <div className="app-container">
       <TitleBar store={props.store} />
       <div className="expanded row">
-        <div className="page">
+        <div className="page medium-8 medium-centered columns">
           {props.children}
         </div>
       </div>

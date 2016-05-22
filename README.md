@@ -105,8 +105,10 @@ npm install
 
 Set up Postgres database to handle persistent data:
 ```sh
-createdb kinectdb -U postgres
 psql -U postgres -d kinectdb -f ./server/config/schema.sql
+
+// to use dummy data in application
+node dummyData.js
 ```
 
 Set up Redis server to handle device usage expiration times:
@@ -193,7 +195,7 @@ Relationships are important in our application - so we wanted a relational datab
 ####__Why We Chose Redis__
 We needed to run a cron job (once per minute) to deal with toggling off devices with “expired time” for guests. Redis allowed us to keep and delete this data in an fast and efficient key-value store. We chose Redis over other non-persistent databases because of the functionality to sort sets based on a ‘score’ (see here: <http://redis.io/commands/ZRANGE>). The score we used for each guest device was the expiration time in milliseconds. Adding and returning items from this set has time complexities of O(log(N)) and O(log(N) + M).
 
-![kinectsitserverarchitecture](https://cloud.githubusercontent.com/assets/5761911/15413704/f2101910-1de7-11e6-8026-302a126eab5f.png)
+![server architecture kinectsit](https://cloud.githubusercontent.com/assets/5761911/15435698/a8f137ce-1e72-11e6-8950-2f59943396c4.png)
 
 
 ###__Database Schema__ 
@@ -207,17 +209,51 @@ We needed to run a cron job (once per minute) to deal with toggling off devices 
 
 ![kinectsitdatabaseshema](https://cloud.githubusercontent.com/assets/5761911/15413746/5557457a-1de8-11e6-9bd9-f3576a0967ff.png)
 
+####__Useful Database Commands__
+To check the content in your databases while in development, use the following commands:
+
+```sh
+//// FROM POSTGRES TERMINAL
+
+// show all databases
+\list
+
+// connect to the database used in this project
+\c kinectdb
+
+// show all tables in that database
+\dt
+
+// show all data in the table called 'device transactions' 
+// don't forget the semi-colon!
+select * from device_transactions;
+```
+
+```sh
+//// FROM REDIS TERMINAL
+
+// will return the value of all items stored
+// this is the hardware key for the devices waiting to be toggled off
+zrangebyscore device -inf +inf
+
+// will return the score for all items stored
+// this is the 'expiration time' for each device - in milliseconds
+// the worker is checking every minute if this time is older than the current time
+// once it is, the worker will send a call to toggle the hardware
+// and will delete this key-value set from this database
+zrem device [deviceHardwareKey]
+```
+
 
 ###__Local API Routes__
 
 ####__Primary Interactions__
 The pictures below show the the urls, methods, purpose, and data received back from our client-to-server API requests. 
 
-![kinectsitlocalusersapi](https://cloud.githubusercontent.com/assets/5761911/15413749/557e183a-1de8-11e6-8aa7-3e41d95cf74c.png)
+![apiusers](https://cloud.githubusercontent.com/assets/5761911/15436412/a0d2993a-1e76-11e6-92af-d7fa5df01c23.png)
+![apihouses](https://cloud.githubusercontent.com/assets/5761911/15436413/a0d36db0-1e76-11e6-8002-72150180aa4c.png)
+![apidevices](https://cloud.githubusercontent.com/assets/5761911/15436603/aafa0fc8-1e77-11e6-9f7d-35890f6ad7b5.png)
 
-![kinectsitlocaldeviceapi](https://cloud.githubusercontent.com/assets/5761911/15415218/13edb502-1df6-11e6-829f-fc877857daee.png)
-
-![kinectsitlocalhomesapi](https://cloud.githubusercontent.com/assets/5761911/15413748/557dfbde-1de8-11e6-9a42-2d03fc0a51f0.png)
 
 
 ###__Third-Party API Interactions__
@@ -228,7 +264,8 @@ The sequence diagram below shows how we use the LittleBits API for three actions
 ####__Coinbase API__
 The diagram also shows the sequence for Coinbase O-Auth in our application.
 
-![kinectsitexternalapisequencediagram](https://cloud.githubusercontent.com/assets/5761911/15415229/2ecaca7c-1df6-11e6-92ee-917fb12975c6.png)
+![kinectsitthirdpartyapi](https://cloud.githubusercontent.com/assets/5761911/15436156/49f8b848-1e75-11e6-8a0c-fa0a46d7b6e2.png)
+
 
 
 ###__Styling__

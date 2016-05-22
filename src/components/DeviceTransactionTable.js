@@ -48,7 +48,7 @@ export class DeviceTransactionTable extends React.Component {
   render() {
     return (
       <div>
-        <Table style={{ width: '350px' }}>
+        <Table >
           <TableHeader>
             <TableRow>
               <TableHeaderColumn style={{ width: '100px', paddingLeft: '0px' }}>

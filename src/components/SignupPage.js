@@ -5,7 +5,6 @@ import { Card, CardTitle } from 'material-ui/Card';
 export const SignupPage = () => (
   <div className="medium-10 columns medium-centered">
     <Card
-      className="card"
       style={{
         boxShadow: 'none',
         textAlign: 'center',
@@ -13,7 +12,7 @@ export const SignupPage = () => (
       }}
     >
       <CardTitle
-        title="Create an Account with Kinects.It!"
+        title="Create an account with Kinects.It!"
       />
     </Card>
     <SignupForm />

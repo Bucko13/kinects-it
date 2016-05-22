@@ -123,7 +123,6 @@ export class LoginPage extends React.Component {
     return (
       <div className="medium-8 medium-centered columns">
         <Card
-          className="card"
           style={{
             boxShadow: 'none',
             textAlign: 'center',
