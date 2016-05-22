@@ -43,7 +43,8 @@ $kinectsit-palette: (
     background-size: cover;
   }
   &.home{
-    background: url('../videos/videoframe.png') no-repeat center center fixed;
+    background:none;
+    // background: url('../videos/videoframe.png') no-repeat center center fixed;
   }
 }
 
