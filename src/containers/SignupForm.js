@@ -32,11 +32,11 @@ class SignupForm extends React.Component {
   }
 
   componentWillMount() {
-    $('#app').addClass('blur-bg');
+    $('body').addClass('blur-bg');
   }
 
   componentWillUnmount() {
-    $('#app').removeClass('blur-bg');
+    $('body').removeClass('blur-bg');
   }
 
   onUserTypeChange(event) {

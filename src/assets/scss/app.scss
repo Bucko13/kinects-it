@@ -26,25 +26,31 @@ $kinectsit-palette: (
   light-grey: #F5F5F5,
 );
 
-#app {
-  padding-top:65px;
-  min-height:650px;
+body{
   background-color: map-get($kinectsit-palette, light-grey);
-  
-  @include breakpoint(medium) {
-    // All CSS in here goes inside the media query
-    min-height: 750px;
-  }
+
   &.blur-bg{
-    background: url('https://www.kinects.it/assets/images/videoframeblur.png') no-repeat center center fixed; 
+    background: url('http://localhost:3001/assets/images/videoframeblur.png') no-repeat center center fixed; 
     -webkit-background-size: cover;
     -moz-background-size: cover;
     -o-background-size: cover;
     background-size: cover;
   }
   &.home{
-    background:none;
-    // background: url('../videos/videoframe.png') no-repeat center center fixed;
+    // background:none;
+    @include breakpoint(medium down){
+      background-color: none;
+      background: url('http://localhost:3001/assets/videos/videoframe.png') no-repeat center center fixed;
+    }
+  }
+
+}
+#app {
+  padding-top:65px;
+  min-height:650px;
+  @include breakpoint(medium) {
+    // All CSS in here goes inside the media query
+    min-height: 750px;
   }
 }
 
@@ -89,9 +95,13 @@ $kinectsit-palette: (
     left: 0;
     overflow: hidden;
     z-index: -100;
+    @include breakpoint(medium down) {
+      display:none;
+    }
 }
 
 .fullscreen-bg__video {
+  @include breakpoint(medium) {
     position: absolute;
     top: 50%;
     left: 50%;
@@ -103,15 +113,18 @@ $kinectsit-palette: (
        -moz-transform: translate(-50%, -50%);
         -ms-transform: translate(-50%, -50%);
       transform: translate(-50%, -50%);
+  }
 }
 
-@media (max-width: 767px) {
-    .fullscreen-bg {
-        background: url('/assets/videos/videoframe.png') center center / cover no-repeat;
+.fullscreen-bg {
+    @include breakpoint(small down){
+      background: url('/assets/videos/videoframe.png') center center / cover no-repeat;
     }
+}
 
-    .fullscreen-bg__video {
-        display: none;
+.fullscreen-bg__video {
+    @include breakpoint(medium){
+      // display: none;
     }
 }
 
@@ -126,7 +139,7 @@ $kinectsit-palette: (
     bottom: 10%;
     text-shadow: 1px 1px 2px black;
     font-family: $body-font-family!important;
-    @include breakpoint(large up) {
+    @include breakpoint(medium up) {
         // All CSS in here goes inside the media query
         position: absolute;
         bottom: 10%;

@@ -8,11 +8,11 @@ import $ from 'jquery';
 
 export class Home extends React.Component {
   componentWillMount() {
-    $('#app').addClass('home');
+    $('body').addClass('home');
   }
 
   componentWillUnmount() {
-    $('#app').removeClass('home');
+    $('body').removeClass('home');
   }
   render() {
     return (
@@ -31,9 +31,9 @@ export class Home extends React.Component {
           </video>
         </div>
         <div className="home-container row">
-          <div className="small-10 small-offset-1 medium-6 medium-offset-5 columns">
+          <div className="medium-10 medium-offset-2 columns">
             <Card
-              className="card"
+              className="card home-callout"
               style={{
                 background: 'none',
                 border: '1px solid '.concat(kinectsitTheme.palette.textColor),
