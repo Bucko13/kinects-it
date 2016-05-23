@@ -162,8 +162,6 @@ body{
 
 .card.header-card {
   .card-header {
-    // background-color: map-get($kinectsit-palette, primary);
-    // border-top: 3px solid map-get($kinectsit-palette, secondary-highlight);
     font-size: 1.2em;
     font-weight: bold!important;
     background-color: map-get($kinectsit-palette, secondary);
@@ -201,6 +199,17 @@ body{
     left:0;
   }
 } 
+
+.host-dashboard .header-card{
+  .card-header > div{
+    padding-right: 0px!important;
+  }
+  .card-text{
+    padding-top: 16px!important;
+    text-align: center;
+    font-size: 1.2em!important;
+  }
+}
 
 .device-list-container {
   h3 {

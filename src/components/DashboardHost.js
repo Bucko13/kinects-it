@@ -10,7 +10,7 @@ export const DashboardHost = (props) => (
       <div className="medium-5 offset-medium-1 columns">
         <Card className="card header-card">
           <CardHeader className="card-header" title="Host Code" />
-          <CardText>
+          <CardText className="card-text">
             {props.appState.house.code}
           </CardText>
         </Card>
@@ -18,7 +18,7 @@ export const DashboardHost = (props) => (
       <div className="medium-5 columns">
         <Card className="card header-card" >
           <CardHeader className="card-header" title="Host Name" />
-          <CardText>
+          <CardText className="card-text">
             {props.appState.house.name}
           </CardText>
         </Card>
