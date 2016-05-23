@@ -121,7 +121,7 @@ export class LoginPage extends React.Component {
       <div className="loading"><CircularProgress size={2} /></div> : '';
 
     return (
-      <div className="medium-8 medium-centered columns">
+      <div className="large-8 large-centered columns">
         <Card
           style={{
             boxShadow: 'none',
@@ -136,7 +136,7 @@ export class LoginPage extends React.Component {
         {spinner}
         <Paper style={styles.paperStyle} className="column align-self-middle">
           <div className="row">
-            <div className="medium-8 medium-offset-2 small-12 columns">
+            <div className="large-8 large-offset-2 columns">
               <FlatButton
                 className="expanded button"
                 label="Login With Coinbase"

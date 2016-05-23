@@ -30,7 +30,7 @@ body{
   background-color: map-get($kinectsit-palette, light-grey);
 
   &.blur-bg{
-    background: url('http://localhost:3001/assets/images/videoframeblur.png') no-repeat center center fixed; 
+    background: url('/assets/images/videoframeblur.png') no-repeat center center fixed; 
     -webkit-background-size: cover;
     -moz-background-size: cover;
     -o-background-size: cover;
@@ -40,7 +40,7 @@ body{
     // background:none;
     @include breakpoint(medium down){
       background-color: none;
-      background: url('http://localhost:3001/assets/videos/videoframe.png') no-repeat center center fixed;
+      background: url('/assets/videos/videoframe.png') no-repeat center center fixed;
     }
   }
 
