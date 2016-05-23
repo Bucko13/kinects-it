@@ -24,7 +24,7 @@ module.exports = (passport) => {
   passport.deserializeUser((user, done) => {
     // need to do this because database results come back in different format
     const checkUser = user.user || user;
-    return db.one('SELECT * from users where name=${name}', checkUser)
+    db.one('SELECT * from users where name=${name}', checkUser)
 
     .then((data) =>
       done(null, data)
@@ -54,21 +54,20 @@ module.exports = (passport) => {
         if (!userData) {
           loggedInUser = false;
           info = { login: false, message: 'Invalid login attempt, please try again.' };
-        } else {
-          const matches = User.comparePasswords(password, userData.password);
-          if (!matches) {
-            info = { login: false, message: 'Invalid login attempt, please try again.' };
-            loggedInUser = false;
-          } else {
-            loggedInUser = userData;
-            info = { login: true, message: 'User successfully logged in.' };
-            // add home to response if user is already in one (use oneOrNone in case they aren't in a home yet)
-            return db.oneOrNone('SELECT id, inviteCode, housename FROM houses WHERE id = ( SELECT houseid FROM users_houses WHERE userId = $1 )', [loggedInUser.id]);
-          }
+          return {};
         }
-        return {};
-      }).
-      then((homeData) => {
+        const matches = User.comparePasswords(password, userData.password);
+        if (!matches) {
+          info = { login: false, message: 'Invalid login attempt, please try again.' };
+          loggedInUser = false;
+          return {};
+        }
+        loggedInUser = userData;
+        info = { login: true, message: 'User successfully logged in.' };
+        // add home to response if user is already in one (use oneOrNone in case they aren't in a home yet)
+        return db.oneOrNone('SELECT id, inviteCode, housename FROM houses WHERE id = ( SELECT houseid FROM users_houses WHERE userId = $1 )', [loggedInUser.id]);
+      })
+      .then((homeData) => {
         if (loggedInUser && homeData) {
           loggedInUser.house = {};
           loggedInUser.house.id = homeData.id;

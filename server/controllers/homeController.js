@@ -12,6 +12,7 @@ const crontab = require('node-crontab');
 
 client.on('error', (err) => {
   console.log(`Error ${err}`);
+  return err;
 });
 
 // Gets all device transactions for a home
@@ -24,23 +25,22 @@ exports.getUsage = (req, res, next) => {
     db.query('SELECT name, hardwarekey from devices WHERE houseid=${houseid}', { houseid: req.params.homeId })
       .then((devices) => {
         message.devices = devices;
-        return res.json(message);
+        res.json(message);
+        return null;
       })
       .catch((error) => {
         logger.info('ERROR in get devices: ', error);
-        return res.send(error);
+        res.send(error);
+        return null;
       })
-      .finally(() => {
-        next();
-      });
+      .finally(() => next()
+      );
   })
   .catch((error) => {
     logger.info('ERROR in get devices: ', error);
-    return res.send(error);
+    return error;
   })
-  .finally(() => {
-    next();
-  });
+  .finally(() => next());
 };
 
 // Gets list of devices when dashboard first loads
@@ -48,18 +48,20 @@ exports.getDevices = (req, res) => {
   const homeId = req.params.homeId;
   logger.info('HomeId in getDevices: ', homeId);
 
-  return db.query('SELECT ${column^} FROM ${table~} where houseId=${home}', {
+  db.query('SELECT ${column^} FROM ${table~} where houseId=${home}', {
     column: '*',
     table: 'devices',
     home: homeId,
   })
   .then((result) => {
     logger.info('SUCCESS in getDevices');
-    return res.json(result);
+    res.json(result);
+    return null;
   })
   .catch((error) => {
     logger.info('ERROR in get devices: ', error);
-    return res.json({ success: false, message: 'Failed to retrieve devices' });
+    res.json({ success: false, message: 'Failed to retrieve devices' });
+    return null;
   });
 };
 
@@ -70,7 +72,7 @@ exports.getDeviceInfo = (req, res, next) => {
     let data = null;
     let message = null;
 
-    return db.query('SELECT * FROM device_transactions WHERE deviceid=${deviceid} AND useraccountid=(SELECT id FROM user_pay_accounts WHERE userid=${userid})', {
+    db.query('SELECT * FROM device_transactions WHERE deviceid=${deviceid} AND useraccountid=(SELECT id FROM user_pay_accounts WHERE userid=${userid})', {
       deviceid: req.params.deviceId,
       userid: req.query.user,
     })
@@ -86,25 +88,29 @@ exports.getDeviceInfo = (req, res, next) => {
         logger.info('ERROR in getDevices: ', result);
       }
 
-      return res.json({ success, data, message });
+      res.json({ success, data, message });
+      return null;
     })
     .catch((error) => {
       logger.info('ERROR in get devices: ', error);
-      return res.json({ success: false, message: 'Failed to retrieve devices' });
+      res.json({ success: false, message: 'Failed to retrieve devices' });
+      return { success: false, message: 'Failed to retrieve devices' };
     })
     .finally(() => next()
     );
   } else {
-    return db.query('SELECT * FROM device_transactions WHERE deviceid=${deviceid}', {
+    db.query('SELECT * FROM device_transactions WHERE deviceid=${deviceid}', {
       deviceid: req.params.deviceId,
     })
     .then((result) => {
       logger.info('SUCCESS in getDevices: ', result);
-      return res.json(result);
+      res.json(result);
+      return null;
     })
     .catch((error) => {
       logger.info('ERROR in get devices: ', error);
-      return res.send(error);
+      res.send(error);
+      return null;
     })
     .finally(() => next()
     );
@@ -125,15 +131,16 @@ exports.addDevice = (req, res, next) => {
   db.one('INSERT INTO devices(id, houseId, name, description, isactive, hardwarekey, usagecostoptions) VALUES(${deviceId}, ${houseId}, ${name}, ${description}, ${isactive}, ${deviceId}, ${usagecostoptions}) RETURNING *', newDevice)
   .then((result) => {
     logger.info('SUCCESS in addDevice:', result);
-    return res.json(result);
+    res.json(result);
+    return null;
   })
   .catch((error) => {
     logger.info('ERROR in addDevice: ', error);
-    return res.send(error);
+    res.send(error);
+    return null;
   })
-  .finally(() => {
-    next();
-  });
+  .finally(() => next()
+  );
 };
 
 // Sends ping to device after host first types the code
@@ -161,7 +168,8 @@ exports.pingDevice = (req, res) => {
       if (error) {
         throw new Error('error!!! ', error);
       } else {
-        return res.json(body);
+        res.json(body);
+        return null;
       }
     });
   })
@@ -172,7 +180,8 @@ exports.pingDevice = (req, res) => {
     const error = { setup: false,
                     message: 'Setup failed. Device already exists' };
 
-    return res.send(error);
+    res.send(error);
+    return null;
   });
 };
 
@@ -217,7 +226,7 @@ exports.toggleDevice = (req, res) => {
             // Add to the device transaction database
             return db.one('INSERT INTO device_transactions(useraccountid, deviceid, amountspent, timespent) VALUES(${useraccountid}, ${deviceid}, ${amountspent}, ${timespent}) RETURNING *', deviceTransaction);
           }
-          return;
+          return null;
         })
         .then((transactionData) => {
           if (transactionData) {
@@ -230,11 +239,13 @@ exports.toggleDevice = (req, res) => {
             client.zadd('device', endingTime, deviceId, redis.print);
           }
 
-          return res.json({ success: true, transactionData });
+          res.json({ success: true, transactionData });
+          return null;
         })
         .catch((transError) => {
           logger.error('ERROR in toggleDevice: ', transError);
-          return res.json({ success: false, message: 'Failed to communicate to device, please try again' });
+          res.json({ success: false, message: 'Failed to communicate to device, please try again' });
+          return null;
         });
     }
   });
@@ -275,9 +286,11 @@ crontab.scheduleJob('*/1 * * * *', () => {
             db.many('UPDATE devices SET isactive=${isactive}, paidusage=${paidusage} WHERE id=${hardwarekey} RETURNING *', deviceOff) // .many for demo purposes - multiple devices with same id
               .then((result) => {
                 logger.info(result);
+                return result;
               })
               .catch((updateError) => {
                 logger.info(updateError);
+                return updateError;
               });
           }
         });
