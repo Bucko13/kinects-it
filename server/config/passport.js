@@ -140,7 +140,10 @@ module.exports = (passport) => {
     clientID: authKeys.COINBASE_CLIENT_ID,
     clientSecret: authKeys.COINBASE_CLIENT_SECRET,
     callbackURL: 'http://127.0.0.1:3000/api/v1/auth/callback',
-    scope: ['user'],
+    scope: ['user', 'wallet', 'send'],
+    sendLimit: '50',
+    limitCurrency: 'USD',
+    limitPeriod: 'day',
   },
     (accessToken, refreshToken, profile, done) => {
       // asynchronous verification, for effect...

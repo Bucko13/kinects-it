@@ -3,8 +3,6 @@
 'use strict';
 
 /*
-  Terrible, but works....
-
   STEPS TO RUN:
 
   1) postgres must be running
